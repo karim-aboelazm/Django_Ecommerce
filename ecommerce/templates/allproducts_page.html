@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+All Products
+{% endblock title %}
+{% block content %}
+
+<div class="page-heading bg-light">
+    <div class="container">
+      <div class="row align-items-end text-center">
+        <div class="col-lg-7 mx-auto">
+          <h1 class="mb-5">All Products</h1>          
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="untree_co-section pt-3">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        
+        <div class="row">
+          {% for product in products %}
+          <div class="col-6 col-sm-6 col-md-6 mb-4 col-lg-3">
+            <div class="product-item">
+              <a href="shop-single.html" class="product-img">
+                <img src="{{product.image.url}}" alt="Image" class="img-fluid">
+              </a>
+              <h3 class="title"><a href="#">{{product.title}}</a></h3>
+              <div class="price">
+                {% if product.discound > 0 %}
+                <span class="ml-3"><del>£ {{product.price}}</del> __ </span>
+                <span>£ {{product.price_after_discount}}</span>
+                {% else %}
+                <span>£ {{product.price}}</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          {% endfor %}
+          
+        </div>
+
+        <div class="row mt-5 pb-5">
+          <div class="col-md-12" style="text-align:center;">
+            <div class="custom-pagination">
+              <ul class="list-unstyled">
+                {% if products.has_previous %}
+                <li>
+                  <a href="?page={{products.previous_page_number}}">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" d="M5.854 4.646a.5.5 0 0 1 0 .708L3.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0z"/>
+                      <path fill-rule="evenodd" d="M2.5 8a.5.5 0 0 1 .5-.5h10.5a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+                    </svg>                      
+                  </a>
+                </li>
+                {% endif %}
+                {% for i in products.paginator.page_range  %}
+                  {% if i == products.number %}
+                    <li class="active"><a href="?page={{i}}">{{i}}</a></li>
+                  {% else %}
+                    <li><a href="?page={{i}}">{{i}}</a></li>
+                  {% endif %}
+                {% endfor %}
+                {% if products.has_next %}
+                <li>
+                  <a href="?page={{products.next_page_number}}">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" d="M10.146 4.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L12.793 8l-2.647-2.646a.5.5 0 0 1 0-.708z"/>
+                      <path fill-rule="evenodd" d="M2 8a.5.5 0 0 1 .5-.5H13a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 8z"/>
+                    </svg>                   
+                  </a>
+                </li>
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> <!-- /.untree_co-section -->
+</div>
+{% endblock content %}

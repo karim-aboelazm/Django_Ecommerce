@@ -9,6 +9,6 @@ urlpatterns = [
     path('men/'     ,MenView.as_view(),name='men'),
     path('woman/'   ,WomanView.as_view(),name='woman'),
     path('children/',ChildrenView.as_view(),name='children'),
-    path('category/',CategoryView.as_view(),name='category'),
+    path('all-products/',AllProductsView.as_view(),name='all_products'),
 ]
 

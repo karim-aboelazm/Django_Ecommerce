@@ -27,10 +27,10 @@
     <div class="sticky-nav js-sticky-header">
         <div class="container position-relative">
             <div class="site-navigation text-center dark">
-                <a href="index.html" class="logo menu-absolute m-0"><img src="{% static '' %}images/logo.png" style="width: 45px;" alt="" srcset=""> Shoppy<span class="text-primary">.</span></a>
+                <a href="index.html" class="logo menu-absolute m-0"><img src="{{shoppies.icon.url}}" style="width: 45px;" alt="" srcset=""> {{shoppies.title}}<span class="text-primary">.</span></a>
                 <ul class="js-clone-nav pl-0 d-none d-lg-inline-block site-menu">
                     <li class="active"><a href="{% url 'ecommerce:home' %}">Home</a></li>
-                    <li><a href="{% url 'ecommerce:category' %}">Categories</a></li>
+                    <li><a href="{% url 'ecommerce:all_products' %}">All Products</a></li>
                     <li><a href="{% url 'ecommerce:men' %}">Men</a></li>
                     <li><a href="{% url 'ecommerce:woman' %}">Women</a></li>
                     <li><a href="{% url 'ecommerce:children' %}">Children</a></li>

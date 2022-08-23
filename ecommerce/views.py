@@ -22,12 +22,12 @@ class HomeView(CreateView):
         context['about_company'] = About_Company.objects.all().order_by('-id')
         return context
 
-    
 class MenView(TemplateView):
     template_name = 'men_page.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['shoppies'] = Shoppy.objects.latest('id')
+        context['cat'] = Category.objects.get(title='Men')
         return context
 
 class WomanView(TemplateView):
@@ -35,6 +35,7 @@ class WomanView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['shoppies'] = Shoppy.objects.latest('id')
+        context['cat'] = Category.objects.get(title='Women')
         return context
 
 class ChildrenView(TemplateView):
@@ -42,6 +43,7 @@ class ChildrenView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['shoppies'] = Shoppy.objects.latest('id')
+        context['cat'] = Category.objects.get(title='Childern')
         return context
 
 class AllProductsView(TemplateView):
@@ -54,4 +56,12 @@ class AllProductsView(TemplateView):
         page_number = self.request.GET.get('page')
         product_list = paginator.get_page(page_number)
         context['products'] = product_list
+        return context
+
+class ProductDetailView(TemplateView):
+    template_name = 'product_details.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['shoppies'] = Shoppy.objects.latest('id')
+        context['product'] = Product.objects.get(id=self.kwargs['id'])
         return context

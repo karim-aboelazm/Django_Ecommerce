@@ -24,8 +24,8 @@ All Products
           {% for product in products %}
           <div class="col-6 col-sm-6 col-md-6 mb-4 col-lg-3">
             <div class="product-item">
-              <a href="shop-single.html" class="product-img">
-                <img src="{{product.image.url}}" alt="Image" class="img-fluid">
+              <a href="{% url 'ecommerce:product_details' product.id %}" class="product-img">
+                <img src="{{product.image.url}}" alt="Image" style="height: 350px" class="img-fluid">
               </a>
               <h3 class="title"><a href="#">{{product.title}}</a></h3>
               <div class="price">

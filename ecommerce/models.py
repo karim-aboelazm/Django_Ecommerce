@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Shoppy(models.Model):
     icon        = models.ImageField(upload_to="shoppy/")
@@ -54,3 +55,15 @@ class About_Company(models.Model):
     icon_name = models.CharField(max_length=50)
     def __str__(self):
         return self.title
+
+
+class Clients(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=255)
+    address = models.CharField(max_length=255, blank=True,null=True)
+    image = models.ImageField(upload_to='client_images/')
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    join_on = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.full_name
+

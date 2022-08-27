@@ -83,4 +83,10 @@ MEDIA_URL = "/media/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static_cdn")
 MEDIA_ROOT = os.path.join(BASE_DIR, "media_cdn")
 
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "karimaboelazm6@gmail.com"
+EMAIL_HOST_PASSWORD = "zyfvhqiamqeubjzj"
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

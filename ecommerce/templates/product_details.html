@@ -39,11 +39,9 @@
             {% else %}
             <p class="text-left"><strong>Price :</strong> £ {{product.price}}</p>
             {% endif %}
-            <a class="col-md-12 btn btn-primary btn-lg mt-5 " href="/" style="font-size:18px;">Add To Cart <i class="medium material-icons ml-3" style="position:relative;top:5px;">add_shopping_cart</i></a>
+            <a class="col-md-12 btn btn-primary btn-lg mt-5 " href="{% url 'ecommerce:add_to_cart' product.id %}" style="font-size:18px;">Add To Cart <i class="medium material-icons ml-3" style="position:relative;top:5px;">add_shopping_cart</i></a>
           </div>
         </div>
-
-        
       </div>
     </div>
   </div> <!-- /.untree_co-section -->

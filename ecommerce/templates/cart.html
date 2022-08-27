@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Cart{% endblock title %}
+{% block content %}
+
+<div class="container mt-5 mb-5">
+    <div class="row" style="margin-top: 150px;;">
+        <div class="col-md-8">
+            <h2 class="text-center mt-4"> Items In Your Cart </h2>
+            <table class="table text.center table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">SN</th>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Product Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart.cartproduct_set.all %}
+                    <tr>
+                        <th>{{ forloop.counter }}</th>
+                        <td>{{ item.product.title }}</td>
+                        <td>{{ item.product.price }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.subtotal }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4">
+
+        </div>
+    </div>
+</div>
+{% endblock content %}

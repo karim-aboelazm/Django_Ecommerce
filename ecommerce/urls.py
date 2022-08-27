@@ -16,5 +16,9 @@ urlpatterns = [
     path('client-logout/',ClientLogoutView.as_view(),name='logout'),
     path('client-profile/',ClientProfileView.as_view(),name='client_profile'),
     path('client-update-profile/<int:id>',UpdateProfileView.as_view(),name='update_profile'),
+    path('forget-password/',ForgotPasswordView.as_view(),name='forget_password'),
+    path('reset-password/<email>/<token>/',ResetPasswordView.as_view(),name='reset_password'),
+    path('add-to-cart/<int:id>',AddToCartView.as_view(),name='add_to_cart'),
+    path('cart/',CartView.as_view(),name='cart'),
 ]
 

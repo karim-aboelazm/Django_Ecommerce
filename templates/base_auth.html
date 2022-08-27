@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    {% include 'snippets_auth/head.html' %}
+    <title>{% block title %}{% endblock title %}</title>
+</head>
+<body>
+    {% block content %}   
+    {% endblock content %}
+    <!-- JS -->
+    <script src="{% static '' %}js/jquery.min.js"></script>
+    <script src="{% static '' %}js/main.js"></script>
+</body>
+</html>

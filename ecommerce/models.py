@@ -67,3 +67,49 @@ class Clients(models.Model):
     def __str__(self):
         return self.full_name
 
+class Cart(models.Model):
+    client = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    total = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return "Cart : " + str(self.id)
+
+class CartProduct(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    rate = models.PositiveIntegerField()
+    quantity= models.PositiveIntegerField()
+    subtotal = models.PositiveIntegerField()
+    def __str__(self):
+        return "Cart : " + str(self.cart.id) + " Cart Product : " + str(self.id)
+
+OREDER_STATUS = (
+    ('Order Received', 'Order Received'),
+    ('Order Processing', 'Order Processing'),
+    ('Order On The Way', 'Order On The Way'),
+    ('Order Delivered', 'Order Delivered'),
+    ('Order Cancelled', 'Order Cancelled'),
+)
+PAYMET_METHOD = (
+    ('Cash On Delivery', 'Cash On Delivery'),
+    ('Master Card', 'Master Card'),
+    ('Visa Card', 'Visa Card'),
+    ('Paypal', 'Paypal'),
+    ('Fawry', 'Fawry'),
+)
+
+class Order(models.Model):
+    cart = models.OneToOneField(Cart, on_delete=models.CASCADE)
+    client = models.CharField(max_length=255)
+    shipping_address = models.CharField(max_length=255)
+    phone = models.CharField(max_length=15)
+    email = models.EmailField(null=True, blank=True)
+    subtotal=models.PositiveIntegerField()
+    discount=models.PositiveIntegerField()
+    total=models.PositiveIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    order_status = models.CharField(max_length=50, choices=OREDER_STATUS, default='Order Received')
+    payment_method = models.CharField(max_length=50, choices=PAYMET_METHOD, default='Cash On Delivery')
+    payment_completed = models.BooleanField(default=False, blank=True, null=True)
+    def __str__(self):
+        return "Order : " + str(self.id)

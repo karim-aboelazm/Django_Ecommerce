@@ -68,3 +68,7 @@ class PasswordResetForm(forms.Form):
                   raise forms.ValidationError("Password does not match.")
             return confirm_password
       
+class CheckoutForm(forms.ModelForm):
+      class Meta:
+            model = Order
+            fields = ['client','shipping_address','phone','email','payment_method']

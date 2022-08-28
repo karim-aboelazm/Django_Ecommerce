@@ -20,5 +20,9 @@ urlpatterns = [
     path('reset-password/<email>/<token>/',ResetPasswordView.as_view(),name='reset_password'),
     path('add-to-cart/<int:id>',AddToCartView.as_view(),name='add_to_cart'),
     path('cart/',CartView.as_view(),name='cart'),
+    path('manage-cart/<int:id>',ManageCartView.as_view(),name='manage_cart'),
+    path('empty-cart/',EmptyCartView.as_view(),name='empty_cart'),
+    path('checkout/',CheckoutView.as_view(),name='checkout'),
+    path('payment/',PaypalAndBankView.as_view(),name='payment'),
 ]
 

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load bootstrap5 %}
+{% block title %}Check Out{% endblock title %}
+{% block content %}
+<div class="container" style="margin-top:150px">
+    <h1>Items In Your Cart </h1>
+    <div class="row">
+        <div class="col-md-8" style="margin-top: 40px;">
+            <table class="table text.center table-dark table-hover p-5" >
+                <tr>
+                    <th>SN</th>
+                    <th>Product Name</th>
+                    <th>Product Price</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                </tr>
+                {% for item in cart.cartproduct_set.all %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.product.title }}</td>
+                    <td>$ {{ item.product.price_after_discount }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.subtotal }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <th>Total : </th>
+                    <th> $ {{cart.total}}</th>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <form action="" method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <button type="submit" class="btn btn-success col-md-12">CheckOut</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

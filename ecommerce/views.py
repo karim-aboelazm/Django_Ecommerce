@@ -200,3 +200,89 @@ class CartView(TemplateView):
             cart = None
         context['cart'] = cart
         return context
+
+class ManageCartView(View):
+    def get(self, request, *args, **kwargs):
+        action = request.GET.get('action')
+        cp = CartProduct.objects.get(id=self.kwargs['id'])
+        cart = cp.cart
+        if action == 'inc':
+            cp.quantity += 1
+            cp.subtotal += cp.rate
+            cp.save()
+            cart.total += cp.rate
+            cart.save()
+        elif action == 'dcr':
+            cp.quantity -= 1
+            cp.subtotal -= cp.rate
+            cp.save()
+            cart.total -= cp.rate
+            cart.save()
+            if cp.quantity == 0:
+                cp.delete()
+        elif action == 'rmv':
+            cart.total -= cp.subtotal
+            cart.save()
+            cp.delete()
+        else:
+            pass
+        return redirect('ecommerce:cart')
+
+class EmptyCartView(View):
+    def get(self, request, *args, **kwargs):
+        cart_id = request.session.get('cart_id',None)
+        if cart_id:
+            cart = Cart.objects.get(id=cart_id)
+            cart.cartproduct_set.all().delete()
+            cart.total = 0
+            cart.save()
+        return redirect('ecommerce:cart')
+
+class CheckoutView(CreateView):
+    template_name = 'checkout.html'
+    form_class = CheckoutForm
+    success_url = '/'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['shoppies'] = Shoppy.objects.latest('id')
+        cart_id = self.request.session.get('cart_id',None)
+        if cart_id:
+            cart = Cart.objects.get(id=cart_id)
+        else:
+            cart = None
+        context['cart'] = cart
+        return context
+
+    def form_valid(self, form):
+        cart_id = self.request.session.get('cart_id',None)
+        if cart_id:
+            cart = Cart.objects.get(id=cart_id)
+            form.instance.cart = cart
+            form.instance.subtotal = cart.total
+            form.instance.discount = 0
+            form.instance.total = cart.total
+            form.instance.order_status = 'Order Received'
+            del self.request.session['cart_id']
+            payment_method = form.cleaned_data.get('payment_method')
+            order = form.save()
+            if payment_method == 'Paypal':
+                return redirect(reverse('ecommerce:payment')+"?o_id="+str(order.id))
+
+            elif payment_method == 'Master Card' :
+                return redirect(reverse('ecommerce:payment')+"?o_id="+str(order.id))
+
+            elif payment_method == 'Visa Card':
+                return redirect(reverse('ecommerce:payment')+"?o_id="+str(order.id))
+            else:
+                pass
+        else:
+            return redirect('ecommerce:home')
+        return super().form_valid(form)
+
+class PaypalAndBankView(View):
+    def get(self,request, *args, **kwargs):
+        order_id = request.GET.get('o_id')
+        context = {}
+        context['shoppies'] = Shoppy.objects.latest('id')
+        context['order'] = Order.objects.get(id=order_id)
+        return render(request, 'paypal_and_bank.html', context)

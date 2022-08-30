@@ -1,4 +1,4 @@
-{% load static %}
+{% load static i18n %}
 <div class="search-form" id="search-form">
     <form action="">
         <input type="search" class="form-control" placeholder="Enter keyword to search...">
@@ -28,12 +28,34 @@
         <div class="container position-relative">
             <div class="site-navigation text-center dark">
                 <a href="index.html" class="logo menu-absolute m-0"><img src="{{shoppies.icon.url}}" style="width: 45px;" alt="" srcset=""> {{shoppies.title}}<span class="text-primary">.</span></a>
-                <ul class="js-clone-nav pl-0 d-none d-lg-inline-block site-menu">
-                    <li class="active"><a href="{% url 'ecommerce:home' %}">Home</a></li>
-                    <li><a href="{% url 'ecommerce:all_products' %}">All Products</a></li>
-                    <li><a href="{% url 'ecommerce:men' %}">Men</a></li>
-                    <li><a href="{% url 'ecommerce:woman' %}">Women</a></li>
-                    <li><a href="{% url 'ecommerce:children' %}">Children</a></li>
+                <ul class="js-clone-nav pl-0 d-none d-lg-inline-block site-menu" style="margin-left: -93px;">
+                    <li class="active"><a href="{% url 'ecommerce:home' %}" style="font-size:16px;">{% trans "Home" %}</a></li>
+                    <li><a href="{% url 'ecommerce:all_products' %}" style="font-size:16px;">{% trans "All Products" %}</a></li>
+                    <li><a href="{% url 'ecommerce:men' %}" style="font-size:16px;">{% trans "Men" %}</a></li>
+                    <li><a href="{% url 'ecommerce:woman' %}" style="font-size:16px;">{% trans "Women" %}</a></li>
+                    <li><a href="{% url 'ecommerce:children' %}" style="font-size:16px;">{% trans "Children" %}</a></li>
+
+                    <li  class="user_option_box navbar-nav">
+                        <div class="dropdown navbar-nav">
+                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="user_option_box_icon"><i class="icofont-user-alt-2"></i></span>
+                                <span class="user_option_box_text" style="font-size:16px;transform:uppercase">{% trans "Languages" %}</span>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="padding:0; border:none;">
+                                <form action="{% url 'set_language' %}" method="post" style="padding:0;">
+                                    {% csrf_token %}
+                                    <select name="language" style="height:60px;" class="selectpicker btn btn-primary w-100 m-0 p-0 active" data-width="fit" onchange="this.form.submit()">
+                                    {% get_current_language as LANGUAGE_CODE %}
+                                    {% get_available_languages as LANGUAGES %}
+                                    {% get_language_info_list for available_languages as languages %}
+                                    {% for language in languages %}
+                                        <option  value="{{language.code}}" {% if language.code == LANGUAGE_CODE %}selected{% endif %}>{{language.code}}</option>
+                                    {% endfor %}
+                                    </select>
+                                </form>
+                            </div>
+                        </div>
+                   </li>
                     
                 </ul>
                 <div class="menu-icons">
@@ -56,10 +78,10 @@
                     </a>
                     {% else %}
                     <a href="{% url 'ecommerce:register' %}" class="user-profile">
-                      register + 
+                      {% trans "register" %}
                     </a>
                     <a href="{% url 'ecommerce:login' %}" class="user-profile">
-                       login 
+                       {% trans "login" %} 
                     </a>
                     {% endif %}
                 </div>

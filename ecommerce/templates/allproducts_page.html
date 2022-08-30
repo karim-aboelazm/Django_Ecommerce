@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 {% block title %}
 All Products
 {% endblock title %}
@@ -9,7 +10,7 @@ All Products
     <div class="container">
       <div class="row align-items-end text-center">
         <div class="col-lg-7 mx-auto">
-          <h1 class="mb-5">All Products</h1>          
+          <h1 class="mb-5">{% trans "All Products" %}</h1>          
         </div>
       </div>
     </div>
@@ -27,7 +28,13 @@ All Products
               <a href="{% url 'ecommerce:product_details' product.id %}" class="product-img">
                 <img src="{{product.image.url}}" alt="Image" style="height: 350px" class="img-fluid">
               </a>
+              {% get_current_language as LANGUAGE_CODE %}
+              {% if LANGUAGE_CODE == 'ar' %}
+              <h3 class="title"><a href="#">{{product.title_ar}}</a></h3>
+              {% else %}
               <h3 class="title"><a href="#">{{product.title}}</a></h3>
+              {% endif %}
+              
               <div class="price">
                 {% if product.discound > 0 %}
                 <span class="ml-3"><del>£ {{product.price}}</del> __ </span>

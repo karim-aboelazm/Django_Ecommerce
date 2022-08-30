@@ -1,5 +1,12 @@
+{% load i18n %}
 <!doctype html>
-<html lang="en">
+{% get_current_language as LANGUAGE_CODE %}
+{% if LANGUAGE_CODE == 'ar' %}
+<html lang="ar" dir="rtl">
+{% else %}
+<html lang="en" dir="ltr">
+{% endif %}
+
 <head>
 	{% include 'snippets/head.html' %}
 	{% block add_links %}{% endblock add_links %}

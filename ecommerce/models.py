@@ -41,10 +41,16 @@ class Category(models.Model):
 class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
+    title_ar = models.CharField(max_length=50,blank=True)
     description = models.TextField()
+    description_ar = models.TextField(blank=True)
     image = models.ImageField(upload_to="product/")
     price = models.IntegerField(default=0)
     discound = models.IntegerField(default=0)
+    policy_return = models.CharField(max_length=250,blank=True)
+    policy_return_ar = models.CharField(max_length=250,blank=True)
+    warnty = models.CharField(max_length=250,blank=True)
+    warnty_ar = models.CharField(max_length=250,blank=True)
     price_after_discount = property(lambda self: self.price - (self.price * self.discound / 100))
     def __str__(self):
         return self.title

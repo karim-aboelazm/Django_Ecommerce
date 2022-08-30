@@ -62,6 +62,7 @@ class AllProductsView(TemplateView):
         page_number = self.request.GET.get('page')
         product_list = paginator.get_page(page_number)
         context['products'] = product_list
+        context['available_languages'] = ['en','ar']
         return context
 
 class ProductDetailView(TemplateView):

@@ -5,7 +5,7 @@ SECRET_KEY = "django-insecure-ky8+cbwf*#nrh)!rn62ck7cdf#z60^i$)(nt0xnhw^lf4$5z6!
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['shoppy-ecommerce.herokuapp.com','localhost','127.0.0.1']
 
 INSTALLED_APPS = [
     'jazzmin',

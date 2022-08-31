@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static i18n %}
 {% block title %}
-{{client.user}} Profile
+{% trans "Profile" %}
 {% endblock title %}
 {% block content %}
 
@@ -9,7 +9,7 @@
     <div class="container">
       <div class="row align-items-end text-center">
         <div class="col-lg-7 mx-auto">
-          <h1 class="mb-5">{{client.user}} Profile</h1>  
+          <h1 class="mb-5">{% trans "Profile" %}</h1>  
         </div>
       </div>
     </div>
@@ -43,7 +43,7 @@
             <p class="text-left"><strong>Email  :</strong> {{request.user.email}} </p>
             <p class="text-left"><strong>Phone Number :</strong>  {{client.phone_number}}</p>
             <p class="text-left"><strong>Address :</strong> {{client.address}}</p>
-            <p class="text-left"><strong>Join On :</strong> {% now "jS F Y H:i" %}</p>
+           
             
             <a href="{% url 'ecommerce:update_profile' client.id %}" class="btn btn-primary btn-lg btn-outline">Edit</a>
            </div>

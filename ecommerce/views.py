@@ -26,6 +26,7 @@ class HomeView(CreateView):
         context['offers'] = Offer.objects.latest('id')
         context['products'] = Product.objects.all().order_by('-id')
         context['about_company'] = About_Company.objects.all().order_by('-id')
+        context['available_languages'] = ['en','ar']
         return context
 
 class MenView(TemplateView):
@@ -34,6 +35,7 @@ class MenView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['shoppies'] = Shoppy.objects.latest('id')
         context['cat'] = Category.objects.get(title='Men')
+        context['available_languages'] = ['en','ar']
         return context
 
 class WomanView(TemplateView):
@@ -42,6 +44,7 @@ class WomanView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['shoppies'] = Shoppy.objects.latest('id')
         context['cat'] = Category.objects.get(title='Women')
+        context['available_languages'] = ['en','ar']
         return context
 
 class ChildrenView(TemplateView):
@@ -50,6 +53,7 @@ class ChildrenView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['shoppies'] = Shoppy.objects.latest('id')
         context['cat'] = Category.objects.get(title='Childern')
+        context['available_languages'] = ['en','ar']
         return context
 
 class AllProductsView(TemplateView):
@@ -71,6 +75,7 @@ class ProductDetailView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['shoppies'] = Shoppy.objects.latest('id')
         context['product'] = Product.objects.get(id=self.kwargs['id'])
+        context['available_languages'] = ['en','ar']
         return context
 
 
@@ -112,6 +117,7 @@ class ClientProfileView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['client']   = Clients.objects.get(user=self.request.user)
         context['shoppies']        = Shoppy.objects.latest('id')
+        context['available_languages'] = ['en','ar']
         return context
 
 class UpdateProfileView(UpdateView):
@@ -126,6 +132,12 @@ class UpdateProfileView(UpdateView):
     def get_success_url(self):
         success_url = reverse_lazy('ecommerce:client_profile')
         return success_url
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['shoppies'] = Shoppy.objects.latest('id')
+        context['available_languages'] = ['en','ar']
+        return context
 
 class ForgotPasswordView(FormView):
     template_name = 'forgot_password.html'
@@ -165,6 +177,7 @@ class AddToCartView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['shoppies'] = Shoppy.objects.latest('id')
+        context['available_languages'] = ['en','ar']
         product = Product.objects.get(id=self.kwargs['id'])
         cart_id = self.request.session.get('cart_id',None)
         if cart_id:
@@ -173,19 +186,36 @@ class AddToCartView(TemplateView):
             if this_product_in_cart.exists():
                 cart_product = this_product_in_cart.last()
                 cart_product.quantity += 1
-                cart_product.subtotal += product.price
+                if product.discound > 0:
+                    cart_product.subtotal += product.price_after_discount
+                else:
+                    cart_product.subtotal += product.price
                 cart_product.save()
-                cart.total += product.price
+                cart.total += product.price_after_discount
                 cart.save()
             else:
-                cart_product = CartProduct.objects.create(cart=cart,product=product,rate=product.price,quantity=1,subtotal=product.price)
-                cart.total += product.price
+                if product.discound > 0:
+                    r = product.price_after_discount
+                else:
+                    r = product.price
+                cart_product = CartProduct.objects.create(cart=cart,product=product,rate=r,quantity=1,subtotal=product.price)
+                if product.discound > 0:
+                    cart_product.subtotal += product.price_after_discount
+                else:
+                    cart_product.subtotal += product.price
                 cart.save()
         else:
             cart = Cart.objects.create(total=0)
             self.request.session['cart_id'] = cart.id
-            cart_product = CartProduct.objects.create(cart=cart,product=product,rate=product.price,quantity=1,subtotal=product.price)
-            cart.total += product.price
+            if product.discound > 0:
+                r = product.price_after_discount
+            else:
+                r = product.price
+            cart_product = CartProduct.objects.create(cart=cart,product=product,rate=r,quantity=1,subtotal=product.price)
+            if product.discound > 0:
+                cart.total += product.price_after_discount
+            else:
+                cart.total += product.price
             cart.save()      
         return context
 
@@ -194,6 +224,7 @@ class CartView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['shoppies'] = Shoppy.objects.latest('id')
+        context['available_languages'] = ['en','ar']
         cart_id = self.request.session.get('cart_id',None)
         if cart_id:
             cart = Cart.objects.get(id=cart_id)
@@ -246,6 +277,7 @@ class CheckoutView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['shoppies'] = Shoppy.objects.latest('id')
+        context['available_languages'] = ['en','ar']
         cart_id = self.request.session.get('cart_id',None)
         if cart_id:
             cart = Cart.objects.get(id=cart_id)
@@ -285,5 +317,6 @@ class PaypalAndBankView(View):
         order_id = request.GET.get('o_id')
         context = {}
         context['shoppies'] = Shoppy.objects.latest('id')
+        context['available_languages'] = ['en','ar']
         context['order'] = Order.objects.get(id=order_id)
         return render(request, 'paypal_and_bank.html', context)

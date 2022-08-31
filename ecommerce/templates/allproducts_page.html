@@ -2,7 +2,7 @@
 {% load static %}
 {% load i18n %}
 {% block title %}
-All Products
+{% trans "All Products" %}
 {% endblock title %}
 {% block content %}
 
@@ -34,7 +34,6 @@ All Products
               {% else %}
               <h3 class="title"><a href="#">{{product.title}}</a></h3>
               {% endif %}
-              
               <div class="price">
                 {% if product.discound > 0 %}
                 <span class="ml-3"><del>£ {{product.price}}</del> __ </span>

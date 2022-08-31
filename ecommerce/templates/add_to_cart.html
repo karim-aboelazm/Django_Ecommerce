@@ -1,16 +1,15 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% block title %}
-    Add To Cart
+    {% trans "Add To Cart" %}
 {% endblock title %}
 {% block content %}
 
 <div class="container mt-5 mb-5">
     <div class="row" style="margin-top: 150px;;">
         <div class="col-md-8 mx-auto text-center">
-            <h3>Congratulations!
-                Product is added to the cart successfully</h3>
-            <a href="{% url 'ecommerce:cart' %}"  class="btn btn-success btn-lg mt-5">Check Your Cart</a>
-            
+            <h3>{% trans "Congratulations! Product is added to the cart successfully" %}</h3>
+            <a href="{% url 'ecommerce:cart' %}"  class="btn btn-success btn-lg mt-5">{% trans "Check Your Cart" %}</a>  
         </div>
     </div>
 </div>

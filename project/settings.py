@@ -79,15 +79,14 @@ LANGUAGE = (('ar','Arabic'),('en','English'),)
 
 LOCALE_PATHS = (os.path.join(BASE_DIR, 'locale/'),)
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-    os.path.join(BASE_DIR, "media"),
-]
 STATIC_URL = "/static/"
-MEDIA_URL = "/media/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
-STATIC_ROOT = os.path.join(BASE_DIR, "static_cdn")
-MEDIA_ROOT = os.path.join(BASE_DIR, "media_cdn")
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
+MEDIA_DIRS = (os.path.join(BASE_DIR, "media"),)
+
 
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_USE_TLS = True

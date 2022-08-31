@@ -1,7 +1,13 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static i18n %}
 {% block title %}
-{{product.title}} Details
+{% get_current_language as LANGUAGE_CODE %}
+{% if LANGUAGE_CODE == 'ar' %}
+{{product.title_ar}} {% trans "Details" %}
+{% else %}
+{{product.title}} {% trans "Details" %}
+{% endif %}
+
 {% endblock title %}
 {% block content %}
 
@@ -9,7 +15,12 @@
     <div class="container">
       <div class="row align-items-end text-center">
         <div class="col-lg-7 mx-auto">
-          <h1 class="mb-5">{{product.title}} Details</h1>  
+          {% get_current_language as LANGUAGE_CODE %}
+          {% if LANGUAGE_CODE == 'ar' %}
+          <h1 class="mb-5">{{product.title_ar}} {% trans "Details" %}</h1> 
+          {% else %}
+          <h1 class="mb-5">{{product.title}} {% trans "Details" %}</h1> 
+          {% endif %}
         </div>
       </div>
     </div>
@@ -26,6 +37,26 @@
           </div>
         </div>
 
+        {% get_current_language as LANGUAGE_CODE %}
+        {% if LANGUAGE_CODE == 'ar' %}
+        <div class="col-6 mt-5 col-sm-6 col-md-6 mb-4 col-lg-6">
+          <div class="product-item">
+            <h1>{{product.title}}</h1>
+            <hr style="opacity:0.6">
+            <p style="text-align:justify;">{{product.description}}</p>
+            <hr style="opacity:0.6">
+            {% if product.discound > 0 %}
+            <p class="text-left">  <del>{{product.price}}</del> £ <strong> : السعر قبل الخصم</strong></p>
+            <p class="text-left">% {{product.discound}} <strong>: الخصم</strong></p>
+            <p class="text-left">  {{product.price_after_discount}} £ <strong> : السعر بعد الخصم</strong></p>
+            {% else %}
+            <p class="text-left"> {{product.price}} £ <strong> : السعر</strong></p>
+            {% endif %}
+            <a class="col-md-12 btn btn-primary btn-lg mt-5 " href="{% url 'ecommerce:add_to_cart' product.id %}" style="font-size:18px;"><i class="medium material-icons ml-3" style="position:relative;top:5px;">add_shopping_cart</i> اضافة الي الحقيبة </a>
+          </div>
+        </div>
+
+        {% else %}
         <div class="col-6 mt-5 col-sm-6 col-md-6 mb-4 col-lg-6">
           <div class="product-item">
             <h1>{{product.title}}</h1>
@@ -42,6 +73,11 @@
             <a class="col-md-12 btn btn-primary btn-lg mt-5 " href="{% url 'ecommerce:add_to_cart' product.id %}" style="font-size:18px;">Add To Cart <i class="medium material-icons ml-3" style="position:relative;top:5px;">add_shopping_cart</i></a>
           </div>
         </div>
+
+        {% endif %}
+        
+
+
       </div>
     </div>
   </div> <!-- /.untree_co-section -->

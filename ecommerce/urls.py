@@ -24,5 +24,7 @@ urlpatterns = [
     path('empty-cart/',EmptyCartView.as_view(),name='empty_cart'),
     path('checkout/',CheckoutView.as_view(),name='checkout'),
     path('payment/',PaypalAndBankView.as_view(),name='payment'),
+    path('order-<int:pk>-details/',OrderDetailView.as_view(),name='order_details'),
+    path('search/',SearchView.as_view(),name='search'),
 ]
 

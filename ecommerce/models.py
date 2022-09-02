@@ -35,9 +35,8 @@ class Slider(models.Model):
     title_ar = models.CharField(_('title_ar'),max_length=250,blank=True)
     class Meta:
         verbose_name_plural = _('Slider')
-    
     def __str__(self):
-        return self.title
+        return "Slide number : " + str(self.id)
         
 class Offer(models.Model):
     title = models.CharField(_('title'),max_length=250)
@@ -90,7 +89,7 @@ class About_Company(models.Model):
         return self.title
 
 class Clients(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     full_name = models.CharField(_('full_name'),max_length=255)
     address = models.CharField(_('address'),max_length=255, blank=True,null=True)
     image = models.ImageField(_('image'),upload_to='client_images/')

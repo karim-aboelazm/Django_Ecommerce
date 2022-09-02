@@ -2,66 +2,141 @@
 {% load static i18n %}
 {% block title %}{% trans "Cart" %}{% endblock title %}
 {% block content %}
-<div class="container mt-5 mb-5">
-    <div class="row mx-auto" style="margin-top: 150px;">
-        <div class="col-md-10 mx-auto">
-            <h2 class="text-center mt-4 mb-5">{% trans "Items In Your Cart" %} </h2>
-            <table class="table text.center table-dark table-hover p-5">
-                <thead>
-                    <tr>
-                        <th scope="col">{% trans "SN" %}</th>
-                        <th scope="col">{% trans "Product Name" %}</th>
-                        <th scope="col">{% trans "Product Price" %}</th>
-                        <th scope="col">{% trans "Quantity" %}</th>
-                        <th scope="col">{% trans "Total Price" %}</th>
-                        <th collapse="2">{% trans "Actions" %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in cart.cartproduct_set.all %}
-                    <tr>
-                        <th>{{ forloop.counter }}</th>
-                        <td>{{ item.product.title }}</td>
-                        <td>$ {{ item.product.price_after_discount }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>{{ item.subtotal }}</td>
-                        <td collapse="2">
-                            <div class="actions" style="display:flex;">
-                                <a href="{% url 'ecommerce:manage_cart' item.id %}?action=inc" class="col btn btn-primary">+</a>
-                                <a href="{% url 'ecommerce:manage_cart' item.id %}?action=dcr" class="col btn btn-warning">-</a>
-                                <a href="{% url 'ecommerce:manage_cart' item.id %}?action=rmv" class="col btn btn-danger">x</a>
-                        
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    <tr class="mt-3">
-                        {% get_current_language as LANGUAGE_CODE %}
-                         {% if LANGUAGE_CODE == 'ar' %}
-                        <th collapse="4" class="text-right pt-3"> : السعر النهائي </th>
-                        <th class="pt-3"> {{cart.total}} $</th>
-                        {% else %}
-                        <th collapse="4" class="text-right pt-3">Total : </th>
-                        <th class="pt-3"> $ {{cart.total}}</th>
-                        {% endif %}
-                    </tr>
-                    {% if cart.cartproduct_set.all %}
-                    <th class="align-right">
-                        <td class="align-right" style="right:0">
-                            <a href="{% url 'ecommerce:empty_cart' %}" class="btn btn-danger text-right">{% trans "Empty cart" %} <i class="material-icons" style="position:relative;top:7px">delete</i></a>
-                        </td>
-                        <td class="align-right" style="right:0">
-                            <a href="{% url 'ecommerce:checkout' %}" class="btn btn-warning text-right">{% trans "Checkout" %} <i class="material-icons" style="position:relative;top:7px">payment</i></a>
-                        </td>
-                    </th>
-                    {% endif %}
-                    
-                </tbody>
-            </table>
-        </div>
-        <div class="col-md-4">
 
+{% get_current_language as LANGUAGE_CODE %}
+{% if LANGUAGE_CODE == 'ar' %}
+<div class="card my-5" >
+    <div class="row">
+        <div class="col-md-8 cart" style="border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 1rem;border-bottom-right-radius: 1rem;">
+            <div class="title">
+                <div class="row">
+                    <div class="col text-right"><h4><b>حقيبة التسوق</b></h4></div>
+                    <div class="col align-self-center text-left text-muted"> عدد وحدات الحقيبة :  {{cart.cartproduct_set.all|length}}</div>
+                </div>
+            </div>  
+            {% for item in cart.cartproduct_set.all %}  
+                {% if item.id|divisibleby:2 == 1 %}
+                <div class="row border-top border-bottom">
+                    <div class="row main align-items-center">
+                        <div class="col-2 text-right"><img class="img-fluid" src="{{item.product.image.url}}"></div>
+                        <div class="col text-right">
+                            <div class="row text-right">{{ item.product.title_ar }}</div>
+                            <div class="row text-muted">{{ item.product.category.title_ar}}</div>
+                        </div>
+                        
+                            <div class="col text-left"><a class="border bg-success" href="{% url 'ecommerce:manage_cart' item.id %}?action=inc"> + </a><a href="#" class="border"> {{ item.quantity }} </a><a class="border bg-warning" href="{% url 'ecommerce:manage_cart' item.id %}?action=dcr"> - </a></div>
+                       
+                        <div class="col text-left">$ {{ item.subtotal }}</div>
+                        <div class="col text-left"><span class="close" ><a class="text-danger" href="{% url 'ecommerce:manage_cart' item.id %}?action=rmv">&#10005;</a></span></div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="row">
+                    <div class="row main align-items-center">
+                        <div class="col-2 text-right"><img class="img-fluid" src="{{item.product.image.url}}"></div>
+                        <div class="col text-right"><div class="row">{{ item.product.title_ar }}</div><div class="row text-muted">{{ item.product.category.title_ar}}</div></div>
+                        <div class="col text-left"><a class="border bg-success" href="{% url 'ecommerce:manage_cart' item.id %}?action=inc"> + </a><a href="#" class="border"> {{ item.quantity }} </a><a class="border bg-warning" href="{% url 'ecommerce:manage_cart' item.id %}?action=dcr"> - </a></div>
+                        <div class="col text-left">$ {{ item.subtotal }}</div>
+                        <div class="col text-left"><span class="close"><a class="text-danger" href="{% url 'ecommerce:manage_cart' item.id %}?action=rmv">&#10005;</a></span></div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+            <div class="back-to-shop" ><a class="text-right" href="{% url 'ecommerce:all_products' %}">&rightarrow;<span class="text-muted">العودة الي التسوق </span></a></div>
+        </div>
+        
+
+        <div class="col-md-4 summary" style="border-top-left-radius: 1rem;border-bottom-left-radius: 1rem;border-top-right-radius: 0;border-bottom-right-radius: 0;">
+            <div><h5 class="text-right"><b class="text-right">الملخص</b></h5></div>
+            <hr>
+            <div class="row">
+                <div class="col text-right" style="padding-left:0;">الوحدات: {{cart.cartproduct_set.all|length}} وحدات</div>
+                <div class="col "> {{cart.total}} $</div>
+            </div>
+            <form>
+                <p class="text-right">الشحن</p>
+                <select><option class="text-muted text-right">الرسوم الفعلية- {{cart.total}} $</option></select>
+            </form>
+            <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
+                <div class="col text-right">السعر الكلي</div>
+                <div class="col text-right">{{cart.total}} $</div>
+            </div>
+            {% if cart.cartproduct_set.all %}
+            <a href="{% url 'ecommerce:checkout' %}" class="btn btn-warning">{% trans "Checkout" %}</a>
+            <a href="{% url 'ecommerce:empty_cart' %}" class="btn btn-danger btn-lg text-center">{% trans "Empty cart" %}</a>
+            {% endif %}
         </div>
     </div>
 </div>
+{% else %}
+<div class="card my-5" >
+    <div class="row">
+        <div class="col-md-8 cart">
+            <div class="title">
+                <div class="row">
+                    <div class="col"><h4><b>{% trans "Shopping Cart" %}</b></h4></div>
+                    <div class="col align-self-center text-right text-muted">{{cart.cartproduct_set.all|length}} {% trans "items" %}</div>
+                </div>
+            </div>  
+            {% for item in cart.cartproduct_set.all %}  
+                {% if item.id|divisibleby:2 == 1 %}
+                <div class="row border-top border-bottom">
+                    <div class="row main align-items-center">
+                        <div class="col-2"><img class="img-fluid" src="{{item.product.image.url}}"></div>
+                        <div class="col">
+                            <div class="row">{{ item.product.title }}</div>
+                            <div class="row text-muted">{{ item.product.category}}</div>
+                        </div>
+                        <div class="col">
+                            <a class="border bg-warning" href="{% url 'ecommerce:manage_cart' item.id %}?action=dcr"> - </a><a href="#" class="border"> {{ item.quantity }} </a><a class="border bg-success" href="{% url 'ecommerce:manage_cart' item.id %}?action=inc"> + </a>
+                        </div>
+                        <div class="col">$ {{ item.subtotal }} <span class="close"> <a class="text-danger" href="{% url 'ecommerce:manage_cart' item.id %}?action=rmv">&#10005;</a></span></div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="row">
+                    <div class="row main align-items-center">
+                        <div class="col-2"><img class="img-fluid" src="{{item.product.image.url}}"></div>
+                        <div class="col">
+                            <div class="row">{{ item.product.title }}</div>
+                            <div class="row text-muted">{{ item.product.category}}</div>
+                        </div>
+                        <div class="col">
+                            <a class="border bg-warning" href="{% url 'ecommerce:manage_cart' item.id %}?action=dcr"> - </a><a href="#" class="border"> {{ item.quantity }} </a><a class="border bg-success" href="{% url 'ecommerce:manage_cart' item.id %}?action=inc"> + </a>
+                        </div>
+                        <div class="col">$ {{ item.subtotal }} <span class="close"><a class="text-danger" href="{% url 'ecommerce:manage_cart' item.id %}?action=rmv">&#10005;</a></span></div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+            <div class="back-to-shop" ><a href="{% url 'ecommerce:all_products' %}">&leftarrow;<span class="text-muted">Back to shop</span></a></div>
+        </div>
+        
+
+        <div class="col-md-4 summary">
+            <div><h5><b>Summary</b></h5></div>
+            <hr>
+            <div class="row">
+                <div class="col" style="padding-left:0;">ITEMS : {{cart.cartproduct_set.all|length}} items</div>
+                <div class="col text-right">$ {{cart.total}}</div>
+            </div>
+            <form>
+                <p>SHIPPING</p>
+                <select><option class="text-muted">Standard-Delivery- $ {{cart.total}}</option></select>
+            </form>
+            <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
+                <div class="col">TOTAL PRICE</div>
+                <div class="col text-right">$ {{cart.total}}</div>
+            </div>
+            {% if cart.cartproduct_set.all %}
+            <a href="{% url 'ecommerce:checkout' %}" class="btn btn-warning">{% trans "Checkout" %}</a>
+            <a href="{% url 'ecommerce:empty_cart' %}" class="btn btn-danger btn-lg text-center">{% trans "Empty cart" %}</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+{% include 'snippets/cart_style.html' %}
 {% endblock content %}

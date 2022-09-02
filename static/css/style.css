@@ -5,7 +5,8 @@
 * License: https://creativecommons.org/licenses/by/3.0/
 */
 body {
-  font-family: "Muli", sans-serif;
+
+  font-family: 'Cairo', sans-serif;
   line-height: 1.6;
   background-color: #ffffff;
   overflow-x: hidden;
@@ -67,8 +68,8 @@ a.text-primary {
     color: #b84592 !important; }
 
 h1, .h1, h2, .h2, h3, .h3, h4, .h4 {
-  font-family: "Playfair Display", serif;
-  color: #black; }
+  font-family: 'Cairo', sans-serif;
+  color: black; }
 
 .btn {
   padding-top: 15px;
@@ -1596,3 +1597,46 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4 {
       bottom: 0;
       position: absolute;
       background: #000000; }
+/* new Style */
+#portfolio-flters li {
+  display: inline-block;
+  font-weight: 500;
+  color: var(--dark);
+  cursor: pointer;
+  transition: .5s;
+  border-bottom: 2px solid transparent;
+}
+
+#portfolio-flters li:hover,
+#portfolio-flters li.active {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.portfolio-item img {
+  transition: .5s;
+}
+
+.portfolio-item:hover img {
+  transform: scale(1.1);
+}
+
+.portfolio-item .portfolio-overlay {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, .5);
+  transition: .5s;
+  opacity: 0;
+}
+
+.portfolio-item:hover .portfolio-overlay {
+  opacity: 1;
+}
+
+    

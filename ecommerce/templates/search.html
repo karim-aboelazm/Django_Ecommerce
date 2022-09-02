@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% block title %}
+    {% trans "search" %}
+{% endblock title %}
+{% block content %}
+<div class="page-heading bg-light">
+    <div class="container">
+      <div class="row align-items-end text-center">
+        <div class="col-lg-7 mx-auto">
+            {% get_current_language as LANGUAGE_CODE %}
+            {% if LANGUAGE_CODE == 'ar' %}
+           <h1 class="mb-5">نتائج البحث عن  ( {{request.GET.keyword}} )  </h1> 
+          {% else %} 
+           <h1 class="mb-5">Search Results for ( {{request.GET.keyword}} )  </h1> 
+          {% endif %}
+        </div>
+      </div>
+    </div>
+</div>
+  
+<div class="container-xxl py-5">
+    <div class="container py-5 px-lg-5">
+        {% for result in search_result %}
+            {% get_current_language as LANGUAGE_CODE %}
+            {% if LANGUAGE_CODE == 'ar' %}
+            <div class="row border-bottom py-5 " style="display: flex">
+                <div class="col-md-3">
+                    <img src="{{result.image.url}}" style="width: 100%;" class="img-fluid rounded-start" alt="...">
+                </div>
+                <div class="col-md-8 text-right py-3">
+                    <h5>{{result.title_ar}}</h5>
+                    <p class="text-muted">{{result.category.title_ar}}</p>
+                    <p style="text-align:justify">{{result.description_ar|truncatewords:150}}</p>
+                    <p>{{result.description_ar|truncatewords:150}}</p>
+                    {% if result.discound > 0 %}
+                    <p class="text-right"><strong>السعر قبل الخصم  : </strong> £ <del>{{result.price}}</del> </p>
+                    <p class="text-right"> <strong>الخصم :</strong> {{result.discound}} %</p>
+                    <p class="text-right"><strong>السعر بعد الخصم  :  </strong> £ {{result.price_after_discount}}  </p>
+                    {% else %}
+                    <p class="text-left"> {{product.price}} £ <strong> : السعر</strong></p>
+                    {% endif %}
+                </div>
+                <a class="col-md-4 btn btn-success btn-lg mt-5 mx-auto " href="{% url 'ecommerce:add_to_cart' result.id %}" style="font-size:18px;"><i class="medium material-icons ml-3" style="position:relative;top:5px;">add_shopping_cart</i> اضافة الي الحقيبة </a>
+            </div>
+            {% else %}
+            <div class="row border-bottom py-5 " style="display: flex">
+                <div class="col-md-3">
+                    <img src="{{result.image.url}}" style="width: 100%;" class="img-fluid rounded-start" alt="...">
+                </div>
+                <div class="col-md-8 text-left py-3">
+                    <h5>{{result.title}}</h5>
+                    <p class="text-muted">{{result.category.title}}</p>
+                    <p style="text-align:justify">{{result.description|truncatewords:150}}</p>
+                    {% if result.discound > 0 %}
+                    <p class="text-left"><strong>Old Price :</strong> £ <del>{{result.price}}</del></p>
+                    <p class="text-left"><strong>Discound  :</strong> {{result.discound}} %</p>
+                    <p class="text-left"><strong>New Price :</strong> £ {{result.price_after_discount}}</p>
+                    {% else %}
+                    <p class="text-left"><strong>Price :</strong> £ {{result.price}}</p>
+                    {% endif %}
+                </div>
+                <a class="col-md-4 btn btn-success btn-lg mt-5 mx-auto" href="{% url 'ecommerce:add_to_cart' result.id %}" style="font-size:18px;">Add To Cart <i class="medium material-icons ml-3" style="position:relative;top:5px;">add_shopping_cart</i></a>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

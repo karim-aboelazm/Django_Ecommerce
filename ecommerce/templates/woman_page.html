@@ -15,34 +15,40 @@
   </div>
 </div>
 
-<div class="untree_co-section pt-3">
-  <div class="container">
-    <div class="row">
-      {% for product in cat.product_set.all  %}
-      <div class="col-6 col-sm-6 col-md-6 mb-4 col-lg-3">
-        <div class="product-item">
-          <a href="{% url 'ecommerce:product_details' product.id %}" class="product-img"> 
-            <img src="{{product.image.url}}" alt="Image" style="height:350px;" class="img-fluid">
-          </a>
-          {% get_current_language as LANGUAGE_CODE %}
-              {% if LANGUAGE_CODE == 'ar' %}
-              <h3 class="title"><a href="#">{{product.title_ar}}</a></h3>
-              {% else %}
-              <h3 class="title"><a href="#">{{product.title}}</a></h3>
-              {% endif %}
-          <div class="price">
-            {% if product.discound > 0 %}
-            <span class="ml-3"><del>£ {{product.price}}</del> __ </span>
-            <span>£ {{product.price_after_discount}}</span>
-            {% else %}
-            <span>£ {{product.price}}</span>
-            {% endif %}
-            
+<div class="container-xxl py-5">
+  <div class="container py-5 px-lg-5">
+      <div class="row g-4 portfolio-container">
+        {% for product in cat.product_set.all  %}
+          <div class="col-lg-4 col-md-6 portfolio-item second wow fadeInUp" data-wow-delay="0.1s">
+              <div class="rounded overflow-hidden">
+                  <div class="position-relative overflow-hidden" style="height: 350px;">
+                      <img class="img-fluid w-100" style="height: 100%;width:100%;" src="{{product.image.url}}" alt="">
+                      <div class="portfolio-overlay">
+                          <a style="font-size:18px;font-weight: 700;border-radius:25px;padding:12px;" class="btn btn-outline-light mx-1" href="{% url 'ecommerce:add_to_cart' product.id %}">Add To Cart<i class="medium material-icons ml-3" style="position:relative;top:5px;">add_shopping_cart</i></a>
+                      </div>
+                  </div>
+                  <div class="bg-light p-4">
+                      {% get_current_language as LANGUAGE_CODE %}
+                      {% if LANGUAGE_CODE == 'en' %}
+                      <a style="text-decoration:none;color:black;" href="{% url 'ecommerce:product_details' product.id %}"><h3 class="lh-base mb-0 text-center">{{product.title}}</h3></a>
+                      {% elif LANGUAGE_CODE == 'ar' %}
+                      <a style="text-decoration:none;color:black;" href="{% url 'ecommerce:product_details' product.id %}"><h3 class="lh-base mb-0 text-center">{{product.title_ar}}</h3></a>
+                      {% endif %}
+                    <div class="price text-center">
+                      {% if product.discound > 0 %}
+                      <span class="ml-3"><del>£ {{product.price}}</del> __ </span>
+                      <span>£ {{product.price_after_discount}}</span>
+                      {% else %}
+                      <span>£ {{product.price}}</span>
+                      {% endif %}
+                      
+                    </div>
+                  </div>
+              </div>
           </div>
-        </div>
-      </div>
       {% endfor %}
-  
-    </div>
-  </div> <!-- /.untree_co-section -->
+      </div>
+  </div>
+</div>
+
 {% endblock content %}

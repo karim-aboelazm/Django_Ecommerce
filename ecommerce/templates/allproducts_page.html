@@ -16,76 +16,76 @@
     </div>
 </div>
 
-<div class="untree_co-section pt-3">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        
-        <div class="row">
-          {% for product in products %}
-          <div class="col-6 col-sm-6 col-md-6 mb-4 col-lg-3">
-            <div class="product-item">
-              <a href="{% url 'ecommerce:product_details' product.id %}" class="product-img">
-                <img src="{{product.image.url}}" alt="Image" style="height: 350px" class="img-fluid">
-              </a>
-              {% get_current_language as LANGUAGE_CODE %}
-              {% if LANGUAGE_CODE == 'ar' %}
-              <h3 class="title"><a href="#">{{product.title_ar}}</a></h3>
-              {% else %}
-              <h3 class="title"><a href="#">{{product.title}}</a></h3>
-              {% endif %}
-              <div class="price">
-                {% if product.discound > 0 %}
-                <span class="ml-3"><del>£ {{product.price}}</del> __ </span>
-                <span>£ {{product.price_after_discount}}</span>
-                {% else %}
-                <span>£ {{product.price}}</span>
-                {% endif %}
+
+
+<div class="container-xxl py-5">
+  <div class="container py-5 px-lg-5">
+      <div class="row g-4 portfolio-container">
+        {% for product in products  %}
+          <div class="col-lg-4 col-md-6 portfolio-item second wow fadeInUp" data-wow-delay="0.1s">
+              <div class="rounded overflow-hidden">
+                  <div class="position-relative overflow-hidden" style="height: 350px;">
+                      <img class="img-fluid w-100" style="height: 100%;width:100%;" src="{{product.image.url}}" alt="">
+                      <div class="portfolio-overlay">
+                          <a style="font-size:18px;font-weight: 700;border-radius:25px;padding:12px;" class="btn btn-outline-light mx-1" href="{% url 'ecommerce:add_to_cart' product.id %}">Add To Cart<i class="medium material-icons ml-3" style="position:relative;top:5px;">add_shopping_cart</i></a>
+                      </div>
+                  </div>
+                  <div class="bg-light p-4">
+                      {% get_current_language as LANGUAGE_CODE %}
+                      {% if LANGUAGE_CODE == 'en' %}
+                      <a style="text-decoration:none;color:black;" href="{% url 'ecommerce:product_details' product.id %}"><h5 class="lh-base mb-0 text-center">{{product.title}}</h5></a>
+                      {% elif LANGUAGE_CODE == 'ar' %}
+                      <a style="text-decoration:none;color:black;" href="{% url 'ecommerce:product_details' product.id %}"><h5 class="lh-base mb-0 text-center">{{product.title_ar}}</h5></a>
+                      {% endif %}
+                    <div class="price text-center">
+                      {% if product.discound > 0 %}
+                      <span class="ml-3"><del>£ {{product.price}}</del> __ </span>
+                      <span>£ {{product.price_after_discount}}</span>
+                      {% else %}
+                      <span>£ {{product.price}}</span>
+                      {% endif %}
+                      
+                    </div>
+                  </div>
               </div>
-            </div>
           </div>
-
-          {% endfor %}
-          
-        </div>
-
-        <div class="row mt-5 pb-5">
-          <div class="col-md-12" style="text-align:center;">
-            <div class="custom-pagination">
-              <ul class="list-unstyled">
-                {% if products.has_previous %}
-                <li>
-                  <a href="?page={{products.previous_page_number}}">
-                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" d="M5.854 4.646a.5.5 0 0 1 0 .708L3.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0z"/>
-                      <path fill-rule="evenodd" d="M2.5 8a.5.5 0 0 1 .5-.5h10.5a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-                    </svg>                      
-                  </a>
-                </li>
+        {% endfor %}
+      </div>
+      <div class="row mt-5 pb-5">
+        <div class="col-md-12" style="text-align:center;">
+          <div class="custom-pagination">
+            <ul class="list-unstyled">
+              {% if products.has_previous %}
+              <li>
+                <a href="?page={{products.previous_page_number}}">
+                  <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-left" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M5.854 4.646a.5.5 0 0 1 0 .708L3.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0z"/>
+                    <path fill-rule="evenodd" d="M2.5 8a.5.5 0 0 1 .5-.5h10.5a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+                  </svg>                      
+                </a>
+              </li>
+              {% endif %}
+              {% for i in products.paginator.page_range  %}
+                {% if i == products.number %}
+                  <li class="active"><a href="?page={{i}}">{{i}}</a></li>
+                {% else %}
+                  <li><a href="?page={{i}}">{{i}}</a></li>
                 {% endif %}
-                {% for i in products.paginator.page_range  %}
-                  {% if i == products.number %}
-                    <li class="active"><a href="?page={{i}}">{{i}}</a></li>
-                  {% else %}
-                    <li><a href="?page={{i}}">{{i}}</a></li>
-                  {% endif %}
-                {% endfor %}
-                {% if products.has_next %}
-                <li>
-                  <a href="?page={{products.next_page_number}}">
-                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" d="M10.146 4.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L12.793 8l-2.647-2.646a.5.5 0 0 1 0-.708z"/>
-                      <path fill-rule="evenodd" d="M2 8a.5.5 0 0 1 .5-.5H13a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 8z"/>
-                    </svg>                   
-                  </a>
-                </li>
-                {% endif %}
-              </ul>
-            </div>
+              {% endfor %}
+              {% if products.has_next %}
+              <li>
+                <a href="?page={{products.next_page_number}}">
+                  <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M10.146 4.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L12.793 8l-2.647-2.646a.5.5 0 0 1 0-.708z"/>
+                    <path fill-rule="evenodd" d="M2 8a.5.5 0 0 1 .5-.5H13a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 8z"/>
+                  </svg>                   
+                </a>
+              </li>
+              {% endif %}
+            </ul>
           </div>
         </div>
       </div>
-    </div>
-  </div> <!-- /.untree_co-section -->
+  </div>
 </div>
 {% endblock content %}

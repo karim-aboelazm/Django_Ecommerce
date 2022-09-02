@@ -18,45 +18,122 @@
 <div class="untree_co-section pt-3">
     <div class="container">
       <div class="row">
-        <div class="col-6 mt-5 col-sm-6 col-md-6 mb-4 col-lg-6">
+        <div class="card my-5 col-md-4 py-5 ">
           <div class="product-item">
             {% if client.image %}
-            <a href="" class="product-img">  
-                <img src="{{client.image.url}}" alt="Image" style="width:100%" class="img-fluid">
+            <a href="" class="product-img ">  
+                <img src="{{client.image.url}}" alt="Image" style="width:60%;height:60%;border:2px solid;border-radius:50%" class="img-fluid profile-image">
             </a>
             {% else %}
-            <a href="" class="product-img">  
-                <img src="{% static 'images/user_default.png' %}" alt="Image" style="width:100%" class="img-fluid">
+            <a href="" class="product-img ">  
+                <img src="{% static 'images/user_default.png' %}" alt="Image" style="width:60%;height:60%;border:2px solid;border-radius:50%" class="img-fluid profile-image">
             </a>
             {% endif %}
+           
           </div>
-        </div>
-
-        <div class="col-6 mt-5 col-sm-6 col-md-6 mb-4 col-lg-6">
           <div class="product-item">
-            
             <h1>{{client.full_name}}</h1>
-            
             <hr style="opacity:0.6">
-    
             <p class="text-left"><strong>Username :</strong>{{request.user.username}}</p>
             <p class="text-left"><strong>Email  :</strong> {{request.user.email}} </p>
             <p class="text-left"><strong>Phone Number :</strong>  {{client.phone_number}}</p>
             <p class="text-left"><strong>Address :</strong> {{client.address}}</p>
-           
-            
-            <a href="{% url 'ecommerce:update_profile' client.id %}" class="btn btn-primary btn-lg btn-outline">Edit</a>
+            <a href="{% url 'ecommerce:update_profile' client.id %}" class="btn btn-dark btn-lg btn-outline" style="font-size:18px;border-radius:25px;"> Edit <i class="material-icons" style="position:relative;top:5px;">mode_edit</i></a>
            </div>
         </div>
-
         
+        {% get_current_language as LANGUAGE_CODE %}
+        {% if LANGUAGE_CODE == 'ar' %}
+
+          <div class="card my-5 col-md-7 ml-3">
+            <div class="title">
+                <div class="row">
+                    <div class="col-md-12 text-right"><h5><b>الطلبات الخاصة بك</b></h5></div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 align-self-center text-muted text-right"> عدد وحدات الحقيبة :  {{orders|length}}</div>
+              </div>
+            </div> 
+            <hr>
+            <div class="cart">
+              {% for item in orders %}  
+                  {% if item.id|divisibleby:2 == 1 %}
+                  <div class="row border-top border-bottom">
+                    <div class="row main align-items-center">
+                      <div class="col text-right">طلب _ {{item.id}}</div>
+                      <div class="col text-right">$ {{item.total}}</div>
+                      <div class="col text-right">منذ {{item.created_at|timesince}} </div>
+                      <div class="col text-left">{% trans item.order_status %}</div>
+                      <div class="col text-left"><a href="{% url 'ecommerce:order_details' item.id %}"><i class="material-icons">remove_red_eye</i></a></div>
+                    </div>
+                  </div>
+                  {% else %}
+                  <div class="row main align-items-center">
+                    <div class="row main align-items-center">
+                      <div class="col text-right">طلب _ {{item.id}}</div>
+                      <div class="col text-right">$ {{item.total}}</div>
+                      <div class="col text-right">منذ {{item.created_at|timesince}} </div>
+                      <div class="col text-left">{% trans item.order_status %}</div>
+                      <div class="col text-left"><a href="{% url 'ecommerce:order_details' item.id %}"><i class="material-icons">remove_red_eye</i></a></div>
+                    </div>
+                  </div>
+                  {% endif %}
+              {% endfor %}
+
+              <div class="back-to-shop text-right" ><a class="text-right" href="{% url 'ecommerce:all_products' %}">&rightarrow;<span class="text-muted">العودة الي التسوق </span></a></div>
+            </div>
+          </div>
+        {% else %}
+        <div class="card my-5 col-md-7 ml-3">
+              <div class="title">
+                <div class="row">
+                    <div class="col-md-12 text-left"><h5><b>Your Orders</b></h5></div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 align-self-center text-muted text-left">{{orders|length}} items</div>
+              </div>
+            </div> 
+            <hr>
+            <div class="cart">
+            {% for item in orders %}  
+                {% if item.id|divisibleby:2 == 1 %}
+                <div class="row border-top border-bottom mb-2">
+                    <div class="row main align-items-center">
+                        <div class="col text-left">ORDER _ {{item.id}}</div>
+                        <div class="col text-left">$ {{item.total}}</div>
+                        <div class="col text-left">{{item.created_at|timesince}} ago</div>
+                        <div class="col text-right">{{item.order_status}}</div>
+                        <div class="col text-right"><a href="{% url 'ecommerce:order_details' item.id %}"><i class="material-icons">remove_red_eye</i></a></div>
+                      </div>
+                </div>
+                {% else %}
+                <div class="row">
+                    <div class="row main align-items-center ">
+                      
+                        <div class="col text-left">ORDER _ {{item.id}} </div>
+                        <div class="col text-left">$ {{item.total}} </div>
+                        <div class="col text-left">{{item.created_at|timesince}} ago </div>
+                        <div class="col text-right">{{item.order_status}} </div>
+                        <div class="col text-right"><a href="{% url 'ecommerce:order_details' item.id %}"><i class="material-icons">remove_red_eye</i></a></div>
+                        
+                      </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+            <div class="back-to-shop text-left" ><a href="{% url 'ecommerce:all_products' %}">&leftarrow;<span class="text-muted">Back to shop</span></a></div>
+        </div>
+        {% endif %}
+
+
+
       </div>
     </div>
-  </div> <!-- /.untree_co-section -->
+  </div>
+</div> <!-- /.untree_co-section -->
 
 
 
   
-
+{% include 'snippets/cart_style.html' %}
 
 {% endblock content %}

@@ -1,16 +1,25 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.urls import reverse,reverse_lazy
-from django.views.generic import TemplateView,CreateView,FormView,View,UpdateView
+from django.views.generic import TemplateView,CreateView,FormView,View,UpdateView,DetailView
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from ecommerce.utils import password_reset_token
 from .models import *
 from .forms import *
 
-class HomeView(CreateView):
+class ShoppyMixin(): 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and Clients.objects.filter(user=request.user).exists():
+            pass
+        else:
+            return redirect('/client-login/')
+        return super().dispatch(request, *args, **kwargs)
+
+class HomeView(ShoppyMixin,CreateView):
     template_name = 'home_page.html'
     form_class = SubscribeForm
     success_url = '/'
@@ -29,7 +38,7 @@ class HomeView(CreateView):
         context['available_languages'] = ['en','ar']
         return context
 
-class MenView(TemplateView):
+class MenView(ShoppyMixin,TemplateView):
     template_name = 'men_page.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -38,7 +47,7 @@ class MenView(TemplateView):
         context['available_languages'] = ['en','ar']
         return context
 
-class WomanView(TemplateView):
+class WomanView(ShoppyMixin,TemplateView):
     template_name ='woman_page.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -47,7 +56,7 @@ class WomanView(TemplateView):
         context['available_languages'] = ['en','ar']
         return context
 
-class ChildrenView(TemplateView):
+class ChildrenView(ShoppyMixin,TemplateView):
     template_name = 'children_page.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -56,20 +65,20 @@ class ChildrenView(TemplateView):
         context['available_languages'] = ['en','ar']
         return context
 
-class AllProductsView(TemplateView):
+class AllProductsView(ShoppyMixin,TemplateView):
     template_name = 'allproducts_page.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['shoppies'] = Shoppy.objects.latest('id')
         all_products = Product.objects.all().order_by('-id')
-        paginator = Paginator(all_products,8)
+        paginator = Paginator(all_products,6)
         page_number = self.request.GET.get('page')
         product_list = paginator.get_page(page_number)
         context['products'] = product_list
         context['available_languages'] = ['en','ar']
         return context
 
-class ProductDetailView(TemplateView):
+class ProductDetailView(ShoppyMixin,TemplateView):
     template_name = 'product_details.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -78,8 +87,7 @@ class ProductDetailView(TemplateView):
         context['available_languages'] = ['en','ar']
         return context
 
-
-class ClientRegisterView(CreateView):
+class ClientRegisterView(ShoppyMixin,CreateView):
    template_name='client_register.html'
    form_class = ClientRegisterForm
    success_url = '/'
@@ -92,7 +100,7 @@ class ClientRegisterView(CreateView):
         login(self.request,user)
         return super().form_valid(form)
 
-class ClientLoginView(FormView):
+class ClientLoginView(ShoppyMixin,FormView):
     template_name = 'client_login.html'
     form_class = ClientLoginForm
     success_url = '/'
@@ -106,21 +114,22 @@ class ClientLoginView(FormView):
         else:
             return super().form_invalid(form)  
 
-class ClientLogoutView(View):
+class ClientLogoutView(ShoppyMixin,View):
     def get(self, request):
         logout(request)
         return redirect('/')
 
-class ClientProfileView(TemplateView):
+class ClientProfileView(ShoppyMixin,TemplateView):
     template_name = 'client_profile.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['client']   = Clients.objects.get(user=self.request.user)
         context['shoppies']        = Shoppy.objects.latest('id')
         context['available_languages'] = ['en','ar']
+        context['orders']= Order.objects.filter(cart__client=self.request.user).order_by('-id')
         return context
 
-class UpdateProfileView(UpdateView):
+class UpdateProfileView(ShoppyMixin,UpdateView):
     model = Clients
     form_class = UpdateProfileForm
     template_name = 'update_profile.html'
@@ -135,11 +144,11 @@ class UpdateProfileView(UpdateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['shoppies'] = Shoppy.objects.latest('id')
+        context['shoppies']        = Shoppy.objects.latest('id')
         context['available_languages'] = ['en','ar']
         return context
 
-class ForgotPasswordView(FormView):
+class ForgotPasswordView(ShoppyMixin,FormView):
     template_name = 'forgot_password.html'
     form_class = ForgotPasswordForm
     success_url = '/forget-password/?m=s'
@@ -160,7 +169,7 @@ class ForgotPasswordView(FormView):
         print(html_content)
         return super().form_valid(form)
 
-class ResetPasswordView(FormView):
+class ResetPasswordView(ShoppyMixin,FormView):
     template_name = 'reset_password.html'
     form_class = PasswordResetForm
     success_url = '/client-login/'
@@ -172,7 +181,7 @@ class ResetPasswordView(FormView):
         user.save()
         return super().form_valid(form)
 
-class AddToCartView(TemplateView):
+class AddToCartView(ShoppyMixin,TemplateView):
     template_name = 'add_to_cart.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -186,40 +195,23 @@ class AddToCartView(TemplateView):
             if this_product_in_cart.exists():
                 cart_product = this_product_in_cart.last()
                 cart_product.quantity += 1
-                if product.discound > 0:
-                    cart_product.subtotal += product.price_after_discount
-                else:
-                    cart_product.subtotal += product.price
+                cart_product.subtotal += product.price_after_discount
                 cart_product.save()
                 cart.total += product.price_after_discount
                 cart.save()
             else:
-                if product.discound > 0:
-                    r = product.price_after_discount
-                else:
-                    r = product.price
-                cart_product = CartProduct.objects.create(cart=cart,product=product,rate=r,quantity=1,subtotal=product.price)
-                if product.discound > 0:
-                    cart_product.subtotal += product.price_after_discount
-                else:
-                    cart_product.subtotal += product.price
+                cart_product = CartProduct.objects.create(cart=cart,product=product,rate=product.price_after_discount,quantity=1,subtotal=product.price_after_discount)
+                cart.total += product.price_after_discount
                 cart.save()
         else:
             cart = Cart.objects.create(total=0)
             self.request.session['cart_id'] = cart.id
-            if product.discound > 0:
-                r = product.price_after_discount
-            else:
-                r = product.price
-            cart_product = CartProduct.objects.create(cart=cart,product=product,rate=r,quantity=1,subtotal=product.price)
-            if product.discound > 0:
-                cart.total += product.price_after_discount
-            else:
-                cart.total += product.price
+            cart_product = CartProduct.objects.create(cart=cart,product=product,rate=product.price_after_discount,quantity=1,subtotal=product.price_after_discount)
+            cart.total += product.price_after_discount
             cart.save()      
         return context
 
-class CartView(TemplateView):
+class CartView(ShoppyMixin,TemplateView):
     template_name = 'cart.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -233,22 +225,22 @@ class CartView(TemplateView):
         context['cart'] = cart
         return context
 
-class ManageCartView(View):
+class ManageCartView(ShoppyMixin,View):
     def get(self, request, *args, **kwargs):
         action = request.GET.get('action')
         cp = CartProduct.objects.get(id=self.kwargs['id'])
         cart = cp.cart
         if action == 'inc':
             cp.quantity += 1
-            cp.subtotal += cp.rate
+            cp.subtotal += cp.product.price_after_discount
             cp.save()
-            cart.total += cp.rate
+            cart.total += cp.product.price_after_discount
             cart.save()
         elif action == 'dcr':
             cp.quantity -= 1
-            cp.subtotal -= cp.rate
+            cp.subtotal -= cp.product.price_after_discount
             cp.save()
-            cart.total -= cp.rate
+            cart.total -= cp.product.price_after_discount
             cart.save()
             if cp.quantity == 0:
                 cp.delete()
@@ -260,7 +252,7 @@ class ManageCartView(View):
             pass
         return redirect('ecommerce:cart')
 
-class EmptyCartView(View):
+class EmptyCartView(ShoppyMixin,View):
     def get(self, request, *args, **kwargs):
         cart_id = request.session.get('cart_id',None)
         if cart_id:
@@ -270,7 +262,7 @@ class EmptyCartView(View):
             cart.save()
         return redirect('ecommerce:cart')
 
-class CheckoutView(CreateView):
+class CheckoutView(ShoppyMixin,CreateView):
     template_name = 'checkout.html'
     form_class = CheckoutForm
     success_url = '/'
@@ -312,11 +304,49 @@ class CheckoutView(CreateView):
             return redirect('ecommerce:home')
         return super().form_valid(form)
 
-class PaypalAndBankView(View):
+class PaypalAndBankView(ShoppyMixin,View):
     def get(self,request, *args, **kwargs):
         order_id = request.GET.get('o_id')
         context = {}
         context['shoppies'] = Shoppy.objects.latest('id')
-        context['available_languages'] = ['en','ar']
         context['order'] = Order.objects.get(id=order_id)
+        context['available_languages'] = ['en','ar']
         return render(request, 'paypal_and_bank.html', context)
+
+class OrderDetailView(ShoppyMixin,DetailView):
+    template_name = 'order_detail.html'
+    model = Order
+    context_object_name = 'order_object'    
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.clients:
+            order = Order.objects.get(id=self.kwargs['pk'])
+            if request.user.clients == order.cart.client:  
+                return redirect('ecommerce:client_profile')
+        else:
+            return redirect('/login/?next=/client-profile/')
+        return super().dispatch(request, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['shoppies'] = Shoppy.objects.latest('id')
+        context['available_languages'] = ['en','ar']
+        return context
+        
+class SearchView(ShoppyMixin,TemplateView):
+    template_name = 'search.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        kw = self.request.GET.get('keyword')
+        context['search_result'] = Product.objects.filter(
+                Q(category__title__icontains=kw) | 
+                Q(category__title_ar__icontains=kw) | 
+                Q(title__icontains=kw) | 
+                Q(title_ar__icontains=kw) | 
+                Q(description__icontains=kw) | 
+                Q(description_ar__icontains=kw) | 
+                Q(warnty__icontains=kw) | 
+                Q(warnty_ar__icontains=kw) | 
+                Q(policy_return__icontains=kw) | 
+                Q(policy_return_ar__icontains=kw))
+        context['shoppies'] = Shoppy.objects.latest('id')
+        context['available_languages'] = ['en','ar']
+        return context

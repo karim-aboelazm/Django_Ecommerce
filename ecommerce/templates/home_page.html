@@ -1,183 +1,170 @@
+<!-- 
+      [*] This Page inherited from The Base Page In Base Template 
+-->
 {% extends 'base.html' %}
-{% load static i18n %}
-{% block title %}{% trans "Home" %}{% endblock title %}
-{% block content %}
 
-<div class="owl-carousel owl-single home-slider">
-  {% for slide in sliders %}
-    <div class="item">
-      <div class="untree_co-hero" style="background-image: url({{slide.image.url}});">
-        <div class="container">
-          <div class="row align-items-center">
-            <div class="col-lg-6">
+  <!-- 
+      [1] Loading Static And I18n To Use Staticfiles and Translations
+  -->
+  {% load static i18n %}
+
+  <!-- 
+      [2] Page Title With Translation
+  -->
+  {% block title %}
+    {% trans "Home" %}
+  {% endblock title %}
+
+  <!-- 
+      [3] Home Page Content 
+  -->
+  {% block content %}
+    
+    <!-- 
+      [*] Slider Part In Home Page
+    -->
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+          {% for slide in sliders %}
+            {% if slide.id == 1 %}
+            <div class="carousel-item active">
+            {% else %}
+            <div class="carousel-item">
+            {% endif %}
+            <img class="d-block w-100" src="{{slide.image.url}}" style="opacity:0.6;" alt="...">
+            <div class="carousel-caption d-none d-md-block" style="top:30%">
+                {% get_current_language as LANGUAGE_CODE %}
+                {% if LANGUAGE_CODE == 'ar' %}
+                <h1 class="mb-5" style="color:black;"><q> {{slide.title_ar}} </q></h1>
+                {% else %}
+                <h1 class="mb-5" style="color:black;"><q> {{slide.title}} </q></h1>
+                {% endif %}
+                <a href="{% url 'ecommerce:all_products' %}" class="btn btn-dark btn-lg" >{% trans "Shop Now" %}</a>
+            </div>
+            </div>
+            {% endfor %}
+          
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+
+    <!-- 
+      [*] Active Slider and Sliding Time Settings using JavaScript
+    -->
+    <script>
+      $('.carousel').carousel({
+        interval: 1000 * 10,
+      });
+    </script>
+    
+
+    <!-- 
+      [*] Our Products Part In Home Page  
+    -->
+    <div class="container-xxl py-5">
+      <div class="container py-5 px-lg-5">
+          <div class="wow fadeInUp" data-wow-delay="0.1s">
+              <h1 class="text-center mb-5">{% trans "Our Products" %}</h1>
+          </div>
+          <div class="row g-4 portfolio-container">
+            {% for product in products|slice:"6"  %}
+              <div class="col-lg-4 col-md-6 portfolio-item second wow fadeInUp" data-wow-delay="0.1s">
+                  <div class="rounded overflow-hidden">
+                      <div class="position-relative overflow-hidden" style="height: 350px;">
+                          <img class="img-fluid w-100" style="height: 100%;width:100%;" src="{{product.image.url}}" alt="">
+                          <div class="portfolio-overlay">
+                              <a style="font-size:18px;font-weight: 700;border-radius:25px;padding:12px;" class="btn btn-outline-light mx-1" href="{% url 'ecommerce:add_to_cart' product.id %}">Add To Cart<i class="medium material-icons ml-3" style="position:relative;top:5px;">add_shopping_cart</i></a>
+                          </div>
+                      </div>
+                      <div class="bg-light p-4">
+                          {% get_current_language as LANGUAGE_CODE %}
+                          {% if LANGUAGE_CODE == 'en' %}
+                          <a style="text-decoration:none;color:black;" href="{% url 'ecommerce:product_details' product.id %}"><h5 class="lh-base mb-0 text-center">{{product.title}}</h5></a>
+                          {% elif LANGUAGE_CODE == 'ar' %}
+                          <a style="text-decoration:none;color:black;" href="{% url 'ecommerce:product_details' product.id %}"><h5 class="lh-base mb-0 text-center">{{product.title_ar}}</h5></a>
+                          {% endif %}
+                        <div class="price text-center">
+                          {% if product.discound > 0 %}
+                          <span class="ml-3"><del>£ {{product.price}}</del> __ </span>
+                          <span>£ {{product.price_after_discount}}</span>
+                          {% else %}
+                          <span>£ {{product.price}}</span>
+                          {% endif %}
+                          
+                        </div>
+                      </div>
+                  </div>
+              </div>
+          {% endfor %}
+          </div>
+      </div>
+    </div>
+
+    <!-- 
+      [*] Our Offer Part In Home Page  
+    -->
+    <div class="container-xxl py-5">
+      <div class="container py-5 px-lg-5">
+          <div class="wow fadeInUp" data-wow-delay="0.1s">
+              <h1 class="text-center mb-5">{% trans "Our Offers" %}</h1>
+          </div>
+          <div class="row py-5" style="background-image: url({{offers.image.url}});opacity: 0.8;background-position: center;background-size: cover;text-align:center;height:500px;display: flex;justify-content: center;align-items: center;border-radius: 25px;"> 
+            <div class="deal-contents text-center" style="text-align:center;">
+              <span class="subtitle">{% trans "Limited Offers" %} {{offers.rate}}% {% trans "OFF" %}</span>
               {% get_current_language as LANGUAGE_CODE %}
               {% if LANGUAGE_CODE == 'ar' %}
-              <h1 class="mb-4 heading" data-aos="fade-up" data-aos-delay="100"> {{slide.title_ar}} <a href="/">{{shoppies.title_ar}}</a> </h1>
+                <h2 class="title mb-4 text-light">{{offers.title_ar}}</h2>
+                <p class="mb-5">{{offers.description_ar}}</p>
               {% else %}
-              <h1 class="mb-4 heading" data-aos="fade-up" data-aos-delay="100">{{slide.title}} <a href="/">{{shoppies.title}}</a></h1>
+                <h2 class="title mb-4 text-light">{{offers.title}}</h2>
+                <p class="mb-5">{{offers.description}}</p>
               {% endif %}
-              <div class="mb-5 text-white desc mx-auto" data-aos="fade-up" data-aos-delay="200">
-              </div>
-              <p class="mb-0" data-aos="fade-up" data-aos-delay="300"><a href="#" class="btn btn-outline-black">{% trans "Explore now" %}</a></p>
-
+              <a href="{% url 'ecommerce:all_products' %}" class="btn btn-black">{% trans "Shop Now" %}</a>
             </div>
           </div>
-        </div>
-      </div> <!-- /.untree_co-hero -->
-    </div>
-  {% endfor %}
-
-</div>
-
-
-<!-- Offer Section -->
-<div class="untree_co-section">
-  <div class="container">
-    <div class="deal-hero overlay" style="background-image: url({{offers.image.url}})"> 
-      <div class="deal-contents">
-        <span class="subtitle">Limited Offers {{offers.rate}}% OFF</span>
-        <h2 class="title mb-4"><a href="#">{{offers.title}}</a></h2>
-        <p class="mb-5">{{offers.description}}</p>
-        <a href="#" class="btn btn-black">Shop Now</a>
       </div>
-    </div> <!-- /.deal-hero -->
-  </div>
-</div>
-
-<!-- Product Section -->
-<div class="untree_co-section">
-  <div class="container">
-
-    <div class="row">
-      {% for product in products|slice:"6"  %}
-      <div class="col-6 col-sm-6 col-md-6 mb-4 col-lg-4">
-        <div class="product-item">
-          <a href="{% url 'ecommerce:product_details' product.id %}" class="product-img">  
-            <img src="{{product.image.url}}" alt="Image" style="height: 350px" class="img-fluid">
-          </a>
-          {% get_current_language as LANGUAGE_CODE %}
-              {% if LANGUAGE_CODE == 'ar' %}
-              <h3 class="title"><a href="#">{{product.title_ar}}</a></h3>
-              {% else %}
-              <h3 class="title"><a href="#">{{product.title}}</a></h3>
-              {% endif %}
-          <div class="price">
-            {% if product.discound > 0 %}
-            <span class="ml-3"><del>£ {{product.price}}</del> __ </span>
-            <span>£ {{product.price_after_discount}}</span>
-            {% else %}
-            <span>£ {{product.price}}</span>
-            {% endif %}
+    </div>
+    
+    <!-- 
+      [*] Our Services Part In Home Page  
+    -->
+    <div class="container-xxl py-5">
+      <div class="container py-5 px-lg-5">
+          <div class="wow fadeInUp" data-wow-delay="0.1s">
+              <h1 class="text-center mb-5">{% trans "Our Services" %}</h1>
+          </div>
+          <div class="row align-item-stretch mb-5 text-center item-center">
+              {% for ac in about_company|slice:"3" %}
+              
+                <div class="card col feature m-2" style="height:250px;">
+                  <div class="icon mb-4">
+                    <i class="large material-icons">{{ac.icon_name}}</i>
+                  </div>
+                  {% get_current_language as LANGUAGE_CODE %}
+                      {% if LANGUAGE_CODE == 'ar' %}
+                      <h3>{{ac.title_ar}}</h3>
+                      <p>{{ac.description_ar}}</p>
+                      {% else %}
+                      <h3>{{ac.title}}</h3>
+                    <p>{{ac.description}}</p>
+                      {% endif %}
+                </div>
             
+              {% endfor %}
           </div>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</div> <!-- /.untree_co-section -->
+      </div> <!-- /.container -->
+    </div> 
 
-<!-- Offer Section -->
-<div class="untree_co-section">
-  <div class="container">
-    <div class="deal-hero overlay" style="background-image: url({{offers.image.url}})"> 
-      <div class="deal-contents">
-        <span class="subtitle">Limited Offers {{offers.rate}}% OFF</span>
-        {% get_current_language as LANGUAGE_CODE %}
-        {% if LANGUAGE_CODE == 'ar' %}
-          <h2 class="title mb-4"><a href="#">{{offers.title_ar}}</a></h2>
-          <p class="mb-5">{{offers.description_ar}}</p>
-        {% else %}
-          <h2 class="title mb-4"><a href="#">{{offers.title}}</a></h2>
-          <p class="mb-5">{{offers.description}}</p>
-        {% endif %}
-        
-        
-        <a href="#" class="btn btn-black">Shop Now</a>
-      </div>
-    </div> <!-- /.deal-hero -->
-  </div>
-</div>
-
-
-
-<div class="untree_co-section">
-  <div class="container">
-    <div class="row mb-5 align-items-center">
-      <div class="col-md-6">
-        <h2 class="h3">{% trans "Popular Items" %}</h2>        
-      </div>
-      <div class="col-sm-6 carousel-nav text-sm-right">
-        <a href="#" class="prev js-custom-prev-v2">
-          <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-left-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-            <path fill-rule="evenodd" d="M8.354 11.354a.5.5 0 0 0 0-.708L5.707 8l2.647-2.646a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708 0z"/>
-            <path fill-rule="evenodd" d="M11.5 8a.5.5 0 0 0-.5-.5H6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 .5-.5z"/>
-          </svg>
-        </a>
-        <a href="#" class="next js-custom-next-v2">
-          <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-            <path fill-rule="evenodd" d="M7.646 11.354a.5.5 0 0 1 0-.708L10.293 8 7.646 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0z"/>
-            <path fill-rule="evenodd" d="M4.5 8a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5z"/>
-          </svg>
-        </a>
-      </div>
-    </div> <!-- /.heading -->
-    <div class="owl-3-slider owl-carousel">
-      {% for product in products|slice:"6"  %}
-      <div class="item">
-        <div class="product-item">
-          <a href="{% url 'ecommerce:product_details' product.id %}" class="product-img">
-            <img src="{{product.image.url}}" alt="Image" class="img-fluid">
-          </a>
-          {% get_current_language as LANGUAGE_CODE %}
-              {% if LANGUAGE_CODE == 'ar' %}
-              <h3 class="title"><a href="#">{{product.title_ar}}</a></h3>
-              {% else %}
-              <h3 class="title"><a href="#">{{product.title}}</a></h3>
-              {% endif %}
-          <div class="price">
-            {% if product.discound > 0 %}
-            <span class="ml-3"><del>£ {{product.price}}</del> __ </span>
-            <span>£ {{product.price_after_discount}}</span>
-            {% else %}
-            <span>£ {{product.price}}</span>
-            {% endif %}
-          </div>
-        </div>
-      </div> <!-- /.item -->
-      {% endfor %}
-      
-
-    </div>
-  </div> <!-- /.container -->
-</div> <!-- /.untree_co-section -->  
-
-
-
-<div class="untree_co-section bg-light">
-  <div class="container">
-    <div class="row align-items-stretch">
-      {% for ac in about_company|slice:"3" %}
-      <div class="col-12 col-sm-6 col-md-4 mb-3 mb-md-0">
-        <div class="feature h-100">
-          <div class="icon mb-4">
-            <i class="large material-icons">{{ac.icon_name}}</i>
-          </div>
-          {% get_current_language as LANGUAGE_CODE %}
-              {% if LANGUAGE_CODE == 'ar' %}
-              <h3>{{ac.title_ar}}</h3>
-              <p>{{ac.description_ar}}</p>
-              {% else %}
-              <h3>{{ac.title}}</h3>
-             <p>{{ac.description}}</p>
-              {% endif %}
-        </div>
-      </div>
-      {% endfor %} 
-    </div>
-  </div>
-</div> <!-- /.untree_co-section -->
-
-{% endblock content %} 
+  {% endblock content %}  

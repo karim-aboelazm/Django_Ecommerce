@@ -24,13 +24,30 @@
         <div class="navbar-nav mx-auto py-0"> 
             <a class="nav-item nav-link" href="{% url 'ecommerce:home' %}">{% trans "Home" %}</a>
             <a class="nav-item nav-link" href="{% url 'ecommerce:all_products' %}">{% trans "All Products" %}</a>
-            <a class="nav-item nav-link" href="{% url 'ecommerce:men' %}">{% trans "Men" %}</a>
-            <a class="nav-item nav-link" href="{% url 'ecommerce:woman' %}" >{% trans "Women" %}</a>
-            <a class="nav-item nav-link" href="{% url 'ecommerce:children' %}" >{% trans "Children" %}</a>            
+            <div class="dropdown navbar-nav" >
+              <a class="dropdown-toggle nav-item nav-link" href="#" style="top:0px; background: transparent;" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                  <span>
+                      {% trans "Categories" %}
+                  </span>
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <li style="text-align:center"> <a class="nav-item nav-link" href="{% url 'ecommerce:men' %}">{% trans "Men" %}</a></li>
+                <li style="text-align:center"><a class="nav-item nav-link" href="{% url 'ecommerce:woman' %}" >{% trans "Women" %}</a></li>
+                <li style="text-align:center"><a class="nav-item nav-link" href="{% url 'ecommerce:children' %}" >{% trans "Children" %}</a> </li>
+              </ul>
+            </div>
             <div class="user_option_box navbar-nav" style="margin-right: 30px;">
                 <div class="dropdown navbar-nav" >
                     <a class="dropdown-toggle nav-item nav-link" href="#" style="top:0px; background: transparent;" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa fa-language" aria-hidden="true"></i><span>{% translate "Languages" %}</span></a>
+                      {% get_current_language as LANGUAGE_CODE %}
+                      {% if LANGUAGE_CODE == 'en' %}
+                        <i class="small material-icons" aria-hidden="true">translate</i>
+                        <span>{% trans "Languages" %}</span>
+                      {% elif LANGUAGE_CODE == 'ar' %}
+                      <span>{% trans "Languages" %}</span>
+                      <i class="small material-icons" aria-hidden="true">translate</i>
+                      {% endif %}   
+                    </a>  
                     <ul class="dropdown-menu p-0" aria-labelledby="dropdownMenuLink">
                       <form action="{% url 'set_language' %}" method="post">
                         {% csrf_token %}
@@ -52,7 +69,14 @@
             </div>
         </div>
         <div class="user_option_box navbar-nav" style="margin-right: 30px;">
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.clients%}
+            <form class="form-inline mx-4" method="GET" action="{% url 'ecommerce:search' %}">
+              <div class="row">
+                <input class="col-md-8 form-control mr-sm-2" type="search"  name="keyword" aria-label="Search" placeholder={% trans "Search" %}>
+                <button class="col-md-3 btn btn-outline-success my-2 my-sm-0" type="submit"><i class="material-icons">search</i></button>
+              </div>
+            </form>
+            <a class="text-dark pt-2" href="{% url 'ecommerce:cart'%}"><i class="material-icons">add_shopping_cart</i></a>
               <div class="dropdown navbar-nav" >
                 <a class="dropdown-toggle nav-item nav-link" href="#" style="top:0px; background: transparent;" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                   {% get_current_language as LANGUAGE_CODE %}
@@ -92,6 +116,7 @@
                 {% endif %} 
     
               </div>
+              
             {% else %}
               <a href="{% url 'ecommerce:register'%}" class="nav-item nav-link" ><i class="fas fa-user-plus"></i><span>{% trans "Register" %} </span></a>
               <a href="{% url 'ecommerce:login'%}" class="nav-item nav-link" style="margin-left: 30px;"><i class="fas fa-sign-in-alt "></i><span>{% trans "Login" %}</span></a>

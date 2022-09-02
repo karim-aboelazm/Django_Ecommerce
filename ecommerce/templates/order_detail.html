@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+{% block title %}
+    Order Details
+{% endblock title %}
+{% block content %}
+
+{% get_current_language as LANGUAGE_CODE %}
+{% if LANGUAGE_CODE == 'ar' %}
+<div class="card my-5" >
+    <div class="row">
+        <div class="col-md-12 cart" style="border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 1rem;border-bottom-right-radius: 1rem;">
+            <div class="title">
+                <div class="row">
+                    <div class="col text-right"><h4><b>تفاصيل الطلب رقم  ( {{order_object.id}} )</b></h4></div>
+                </div>
+                <div class="row">
+                    <div class="col align-self-center text-right mt-3 text-muted"> عدد الوحدات في الطلب  :  {{order_object.cart.cartproduct_set.all|length}}</div>
+                </div>
+            </div> 
+            <hr>
+            <div class="details">
+                <div class="row"><div class="col text-right"><h5><strong>* رقم الطلب : </strong><span class="text-muted">{{order_object.id}}</span></h5></div></div>
+                <div class="row"><div class="col text-right"><h5><strong>* حالة الطلب : </strong><span class="text-muted">{% trans order_object.order_status %}</span></h5></div></div>
+                <div class="row"><div class="col text-right"><h5><strong>* زمن الطلب : </strong><span class="text-muted">منذ {{order_object.created_at|timesince}}</span> </h5></div></div>
+                <div class="row"><div class="col text-right"><h5><strong>* صاحب الطلب : </strong><span class="text-muted">{{order_object.client}}</span> </h5></div></div>
+                <div class="row"><div class="col text-right"><h5><strong>* رقم الهاتف : </strong><span class="text-muted">{{order_object.phone}}</span> </h5></div></div>
+                <div class="row"><div class="col text-right"><h5><strong>* البريد الالكتروني : </strong><span class="text-muted">{{order_object.email}}</span> </h5></div></div>
+                <div class="row"><div class="col text-right"><h5><strong>* محل الاقامة : </strong><span class="text-muted">{{order_object.shipping_address}}</span> </h5></div></div>
+            </div> 
+            <hr>
+            <div class="row">
+                <div class="col text-right"><h4><b>محتويات الطلب </b></h4></div>
+            </div>
+            <hr>
+            {% for item in order_object.cart.cartproduct_set.all %}  
+                {% if item.id|divisibleby:2 == 1 %}
+                <div class="row border-bottom">
+                    <div class="row main align-items-center">
+                        <div class="col-2 text-right"><img class="img-fluid" src="{{item.product.image.url}}"></div>
+                        <div class="col text-right">
+                            <div class="row text-right">{{ item.product.title_ar }}</div>
+                            <div class="row text-muted">{{ item.product.category.title_ar}}</div>
+                        </div>
+                        <div class="col text-center"> الكمية ( {{ item.quantity }} ) </div>
+                        <div class="col text-left">$ {{ item.subtotal }}</div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="row">
+                    <div class="row main align-items-center">
+                        <div class="col-2 text-right"><img class="img-fluid" src="{{item.product.image.url}}"></div>
+                        <div class="col text-right"><div class="row">{{ item.product.title_ar }}</div><div class="row text-muted">{{ item.product.category.title_ar}}</div></div>
+                        <div class="col text-center"> الكمية ( {{ item.quantity }} ) </div>
+                        <div class="col text-left"> {{ item.subtotal }} $</div>
+                     </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+            <div class="back-to-shop text-right" ><a class="text-right" href="{% url 'ecommerce:client_profile' %}">&rightarrow;<span class="text-muted">العودة الي الملف الشخصي </span></a></div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card my-5" >
+    <div class="row">
+        <div class="col-md-12 cart" style="border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 1rem;border-bottom-right-radius: 1rem;">
+            <div class="title">
+                <div class="row">
+                    <div class="col text-left"><h4><b>Details Of Order Number ( {{order_object.id}} )</b></h4></div>
+                </div>
+                <div class="row">
+                    <div class="col align-self-center text-left mt-3 text-muted">Number Of Items In This Order : {{order_object.cart.cartproduct_set.all|length}}</div>
+                </div>
+            </div> 
+            <hr>
+            <div class="details">
+                <div class="row"><div class="col text-left"><h5><strong>* Order Number :</strong><span class="text-muted">{{order_object.id}}</span></h5></div></div>
+                <div class="row"><div class="col text-left"><h5><strong>* Order Status : </strong><span class="text-muted">{% trans order_object.order_status %}</span></h5></div></div>
+                <div class="row"><div class="col text-left"><h5><strong>* Order Time  : </strong><span class="text-muted">منذ {{order_object.created_at|timesince}}</span> </h5></div></div>
+                <div class="row"><div class="col text-left"><h5><strong>* Order Own : </strong><span class="text-muted">{{order_object.client}}</span> </h5></div></div>
+                <div class="row"><div class="col text-left"><h5><strong>*  Phone Number  : </strong><span class="text-muted">{{order_object.phone}}</span> </h5></div></div>
+                <div class="row"><div class="col text-left"><h5><strong>* Email Address  : </strong><span class="text-muted">{{order_object.email}}</span> </h5></div></div>
+                <div class="row"><div class="col text-left"><h5><strong>* Shipping Address  : </strong><span class="text-muted">{{order_object.shipping_address}}</span> </h5></div></div>
+            </div> 
+            <hr>
+            <div class="row">
+                <div class="col text-left"><h4><b>Order Consists Of </b></h4></div>
+            </div>
+            <hr>
+            {% for item in order_object.cart.cartproduct_set.all %}  
+                {% if item.id|divisibleby:2 == 1 %}
+                <div class="row border-bottom">
+                    <div class="row main align-items-center">
+                        <div class="col-2 text-left"><img class="img-fluid" src="{{item.product.image.url}}"></div>
+                        <div class="col text-left"><div class="row">{{ item.product.title }}</div><div class="row text-muted">{{ item.product.category.title}}</div></div>
+                        <div class="col text-center"> Quantity ( {{ item.quantity }} ) </div>
+                        <div class="col text-right">$ {{ item.subtotal }} </div>
+                     </div>
+                </div>
+                {% else %}
+                <div class="row">
+                    <div class="row main align-items-center">
+                        <div class="col-2 text-left"><img class="img-fluid" src="{{item.product.image.url}}"></div>
+                        <div class="col text-left"><div class="row">{{ item.product.title }}</div><div class="row text-muted">{{ item.product.category.title}}</div></div>
+                        <div class="col text-center"> Quantity ( {{ item.quantity }} ) </div>
+                        <div class="col text-right">$ {{ item.subtotal }} </div>
+                     </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+            <div class="back-to-shop" ><a class="text-right" href="{% url 'ecommerce:client_profile' %}">&leftarrow;<span class="text-muted">Go to my Profile </span></a></div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+{% include 'snippets/cart_style.html' %}
+{% endblock content %}    

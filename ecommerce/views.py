@@ -100,7 +100,7 @@ class ClientRegisterView(ShoppyMixin,CreateView):
         login(self.request,user)
         return super().form_valid(form)
 
-class ClientLoginView(ShoppyMixin,FormView):
+class ClientLoginView(FormView):
     template_name = 'client_login.html'
     form_class = ClientLoginForm
     success_url = '/'
@@ -114,12 +114,12 @@ class ClientLoginView(ShoppyMixin,FormView):
         else:
             return super().form_invalid(form)  
 
-class ClientLogoutView(ShoppyMixin,View):
+class ClientLogoutView(View):
     def get(self, request):
         logout(request)
         return redirect('/')
 
-class ClientProfileView(ShoppyMixin,TemplateView):
+class ClientProfileView(TemplateView):
     template_name = 'client_profile.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -129,7 +129,7 @@ class ClientProfileView(ShoppyMixin,TemplateView):
         context['orders']= Order.objects.filter(cart__client=self.request.user).order_by('-id')
         return context
 
-class UpdateProfileView(ShoppyMixin,UpdateView):
+class UpdateProfileView(UpdateView):
     model = Clients
     form_class = UpdateProfileForm
     template_name = 'update_profile.html'
@@ -148,7 +148,7 @@ class UpdateProfileView(ShoppyMixin,UpdateView):
         context['available_languages'] = ['en','ar']
         return context
 
-class ForgotPasswordView(ShoppyMixin,FormView):
+class ForgotPasswordView(FormView):
     template_name = 'forgot_password.html'
     form_class = ForgotPasswordForm
     success_url = '/forget-password/?m=s'
@@ -169,7 +169,7 @@ class ForgotPasswordView(ShoppyMixin,FormView):
         print(html_content)
         return super().form_valid(form)
 
-class ResetPasswordView(ShoppyMixin,FormView):
+class ResetPasswordView(FormView):
     template_name = 'reset_password.html'
     form_class = PasswordResetForm
     success_url = '/client-login/'

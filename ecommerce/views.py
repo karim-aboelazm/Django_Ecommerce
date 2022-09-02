@@ -87,7 +87,7 @@ class ProductDetailView(ShoppyMixin,TemplateView):
         context['available_languages'] = ['en','ar']
         return context
 
-class ClientRegisterView(ShoppyMixin,CreateView):
+class ClientRegisterView(CreateView):
    template_name='client_register.html'
    form_class = ClientRegisterForm
    success_url = '/'
